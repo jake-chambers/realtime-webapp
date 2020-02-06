@@ -17,7 +17,11 @@
   },
   "homepage": "https://github.com/jake-chambers/realtime-webapp#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "mongodb": "^3.5.2",
+    "mongoose": "^5.8.11",
+    "path": "^0.12.7",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0"
   }
