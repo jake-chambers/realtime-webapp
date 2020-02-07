@@ -14,10 +14,11 @@ var db = mongoose.connection;
 db.on('error', (error) => console.error(error))
 db.once('open', () => {
     console.log('connected to database')
-    var newCounter = new Counter({name: 'counter', value: 0})
-    newCounter.save(function(err,counter){
-        if (err) throw err;
+    Counter.deleteMany({}).exec();
 
+    var newCounter = new Counter({name: 'counter', value: 0})
+    newCounter.save(function(err){
+        if (err) throw err;
         console.log ("Successfully saved");
     })
 
@@ -33,22 +34,39 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'frontend')));
 
-app.get('/get-count', function(req,res){
+app.get('/get-counter', function(req,res){
+    Counter.find((error, result) => {
+            if (error) throw error
+            res.send(result);
+    })
 })
-
 
 //sockey hockey
 io.on('connection', (socket) => {
-    console.log("were living and thriving")
-    // when the client emits 'test', this listens and executes
-
-    socket.on('test', (data) => {
-        console.log("i have received ur test lad");
-    });
+    console.log("connected")
     socket.on('increment', (data) => {
-        console.log("im gunna increment")
-    })
+        console.log("time to increment");
+        
+        Counter.findOne({name:'counter'}, function (error, result){
+            if (error) throw error 
+            update(result,socket)
+        })
+    });
+
     socket.on('disconnect', (data) => {
         console.log("disconnected")
     })
 });
+
+function update(document,socket){
+    console.log("Before update " + document.value)
+    var number = document.value
+    number++;
+    Counter.findOneAndUpdate({name:'counter'}, {value: number},{new:true}, function(error, response){
+        if(error) throw error;
+        console.log("After update: " + response)
+        // io.sockets.emit('updated', response.value);
+        // this one effects everyone except the socket who starts it !! lit
+        // socket.broadcast.emit('updated', response.value);
+    })
+}
