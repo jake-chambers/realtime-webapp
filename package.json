@@ -22,7 +22,7 @@
     "mongodb": "^3.5.2",
     "mongoose": "^5.8.11",
     "path": "^0.12.7",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "socket.io-client": "^2.3.0"
   }
 }
